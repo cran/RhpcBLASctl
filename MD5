@@ -1,0 +1,14 @@
+1ea42d1a440e7f7148aed02d426b34c9 *DESCRIPTION
+8b54e5a89fbda3af5e077053d40bec76 *NAMESPACE
+5530f043b30eac18c3d6863406b26c3a *R/blasctl.R
+de41eb43bb25b977b10ddf8dd96c502b *R/zzz.R
+c851bb8fc8488decc8111cf31f56aac9 *cleanup
+6177a6e2ec40d943e3124adace64f79a *configure
+2489290536124414ffa356c763b92cc0 *configure.ac
+c65154289df7b124150b300010eb592a *man/RhpcBLASctl-package.Rd
+bdb8c54c170ffe69b3f8ef075605264f *src/Makevars.in
+e6794d47edd5d375f2f8d788518ccf95 *src/Makevars.win
+dd8f73a2bf85cdc717daf2793cf4d10d *src/blasctl.c
+0ba98dc05cedae8ac245bd88e9bd4d50 *src/blasctl.h
+7d111a9be642c9d0654112045151fb6e *src/dust/DESCRIPTION.in
+3a6728444a6023688bfaed9f288da920 *src/dust/mk
