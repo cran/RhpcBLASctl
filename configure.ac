@@ -1,9 +1,5 @@
 AC_INIT(src/blasctl.c)
 
-YEARSTAMP=$(date '+%y')
-YDAYSTAMP=$(date '+%j.%H')
-DATESTAMP=$(date '+%Y-%m-%d')
-
 R_HOME=${R_HOME}
 CC=$(${R_HOME}/bin/R CMD config CC 2>/dev/null)
 case "$CC" in
@@ -34,15 +30,7 @@ case "$CC" in
 esac
 
 
-AC_SUBST(YEARSTAMP)
-AC_SUBST(YDAYSTAMP)
-AC_SUBST(DATESTAMP)
-
 AC_SUBST(OMP_CFLAGS)
 AC_SUBST(OMP_LDFLAGS)
 
 AC_OUTPUT(src/Makevars)
-
-AC_OUTPUT(src/dust/DESCRIPTION)
-mv src/dust/DESCRIPTION DESCRIPTION
-

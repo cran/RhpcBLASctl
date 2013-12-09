@@ -8,4 +8,4 @@ rm -f src/*.o
 rm -f src/*~
 rm -f man/*~
 rm -f src/Makevars
-
+rm -f src/symbols.rds

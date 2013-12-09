@@ -17,10 +17,16 @@ omp_set_num_threads(threads)
 }
 \docType{package}
 \title{
-  A package for High-Performance Computing
+  Control the number of threads on BLAS for R
 }
 \description{
-  R HPC Interfaces
+Control the number of threads on BLAS(Aka GotoBLAS, ACML and MKL).
+--
+GotoBLAS(generic) binary for Windows i386 http://prs.ism.ac.jp/~nakama/Survive
+GotoBLAS2/binary/windows/x86/KATMAI/Rblas.dll
+GotoBLAS(generic) binary for Windows x64 http://prs.ism.ac.jp/~nakama/SurviveG
+otoBLAS2/binary/windows/x64/PRESCOTT/Rblas.dll
+
 }
 \details{
   \url{http://prs.ism.ac.jp/~nakama/Rhpc}
