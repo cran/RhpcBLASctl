@@ -1,2 +1,3 @@
-0.13-343.05	fixed date and version in DESCRIPTION.
+0.13-344.02	OpenMP function did not work on Windows.
 
+0.13-343.05	fixed date and version in DESCRIPTION.

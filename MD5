@@ -1,5 +1,5 @@
-a00f001ad5009f78dde5fee60dcf52f2 *ChangeLog
-70040d21e552c3d509100f74e549b495 *DESCRIPTION
+40b452f9090b1c4c5d3c71d64bb632b9 *ChangeLog
+9406155424045309004be2fd0b5e033b *DESCRIPTION
 8b54e5a89fbda3af5e077053d40bec76 *NAMESPACE
 5530f043b30eac18c3d6863406b26c3a *R/blasctl.R
 de41eb43bb25b977b10ddf8dd96c502b *R/zzz.R
@@ -8,6 +8,6 @@ de41eb43bb25b977b10ddf8dd96c502b *R/zzz.R
 8f98d2b363491bc6e4394e066d96bf70 *configure.ac
 c615fb097d1c92eba6b45fdf8be36997 *man/RhpcBLASctl-package.Rd
 bdb8c54c170ffe69b3f8ef075605264f *src/Makevars.in
-e6794d47edd5d375f2f8d788518ccf95 *src/Makevars.win
+72b4da5dcc2eba5e4e4c1fec437ae04b *src/Makevars.win
 dd8f73a2bf85cdc717daf2793cf4d10d *src/blasctl.c
 0ba98dc05cedae8ac245bd88e9bd4d50 *src/blasctl.h
