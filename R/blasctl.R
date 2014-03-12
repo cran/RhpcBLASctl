@@ -1,3 +1,8 @@
+get_num_cores <-
+function()    .Call("get_num_cores", PACKAGE="RhpcBLASctl")
+get_num_procs <-
+function()    .Call("get_num_procs", PACKAGE="RhpcBLASctl")
+
 blas_get_num_procs <-
 function()    .Call("blas_get_num_procs", PACKAGE="RhpcBLASctl")
 
