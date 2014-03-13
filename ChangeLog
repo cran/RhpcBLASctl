@@ -1,4 +1,5 @@
-0.14-71		add function get_num_cores and get_num_procs.
+0.14-72		add function get_num_cores and get_num_procs.
+		add some checks on system different.
 
 0.13-344.02	OpenMP function did not work on Windows.
 

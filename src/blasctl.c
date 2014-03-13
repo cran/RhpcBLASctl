@@ -2,8 +2,21 @@
 #include <Rinternals.h>
 
 #ifndef WIN32
+#include "config.h"
+#endif
+
+#ifdef HAVE_SYS_SYSINFO_H
 #include <sys/sysinfo.h>
 #endif
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+#ifdef HAVE_SYS_SYSCTL_H
+#include <sys/sysctl.h>
+#endif
+
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -66,16 +79,19 @@ static void (*acmlsetnumthreads)(int) = NULL;
 
 SEXP get_num_cores(void)
 {
-#if defined(__APPLE__)
+#if  (defined(__APPLE__) || defined( __FreeBSD__ ) || defined ( __NetBSD__ ) )
   static int num = 0;
   int m[2];
   size_t len;
+  size_t size=sizeof(int);
   SEXP n;
 
   PROTECT(n = allocVector(INTSXP, 1));
   
   if (num == 0) {
-    sysctlbyname("hw.physicalcpu", &num, sizeof(int), NULL, 0);
+#ifdef  HAVE_SYSCTLBYNAME
+    sysctlbyname("hw.physicalcpu", &num, &size, NULL, 0);
+#endif
     if ( num < 1 ){
       m[0] = CTL_HW;
       m[1] = HW_NCPU;
@@ -160,7 +176,7 @@ SEXP get_num_cores(void)
     }
     
     for (seek=0 ; seek<num && cpu_table[seek]!=-1; seek++);
-    num=seek;
+    if(seek>1) num=seek;
     
     free((void*)cpu_table);
   }
@@ -168,24 +184,19 @@ SEXP get_num_cores(void)
   UNPROTECT(1);
   return (n);
 
-
-#elif ( defined( __FreeBSD__ ) || defined ( __NetBSD__ ) )
+#elif defined(HAVE_GET_NPROCS)
   static int num = 0;
-  int m[2];
-  size_t len;
+  SEXP n;
 
   PROTECT(n = allocVector(INTSXP, 1));
 
-  if (num == 0) {
-    m[0] = CTL_HW;
-    m[1] = HW_NCPU;
-    len = sizeof(int);
-    sysctl(m, 2, &num, &len, NULL, 0);
+  if (!num){
+    num = get_nprocs();
   }
-
-  INTEGER(n)[0]=num;
+  INTEGER(n)[0]=num; 
   UNPROTECT(1);
   return (n);
+
 #else
   SEXP n;
   PROTECT(n = allocVector(INTSXP, 1));
@@ -198,7 +209,7 @@ SEXP get_num_cores(void)
 
 SEXP get_num_procs(void)
 {
-#if defined(__APPLE__)
+#if (defined(__APPLE__) || defined( __FreeBSD__ ) || defined ( __NetBSD__ ) )
   static int num = 0;
   int m[2];
   size_t len;
@@ -231,7 +242,7 @@ SEXP get_num_procs(void)
   UNPROTECT(1);
   return(n);
 
-#elif defined(__linux__)
+#elif defined(HAVE_GET_NPROCS)
   static int num = 0;
   SEXP n;
 
@@ -244,23 +255,6 @@ SEXP get_num_procs(void)
   UNPROTECT(1);
   return (n);
 
-#elif ( defined( __FreeBSD__ ) || defined ( __NetBSD__ ) )
-  static int num = 0;
-  int m[2];
-  size_t len;
-
-  PROTECT(n = allocVector(INTSXP, 1));
-
-  if (num == 0) {
-    m[0] = CTL_HW;
-    m[1] = HW_NCPU;
-    len = sizeof(int);
-    sysctl(m, 2, &num, &len, NULL, 0);
-  }
-
-  INTEGER(n)[0]=num;
-  UNPROTECT(1);
-  return (n);
 #else
   SEXP n;
   PROTECT(n = allocVector(INTSXP, 1));
