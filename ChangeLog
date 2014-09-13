@@ -1,3 +1,7 @@
+0.14-256        revert maintainer name...>_<
+
+0.14-255	changed name author and maintainer.
+
 0.14-72		add function get_num_cores and get_num_procs.
 		add some checks on system different.
 
