@@ -21,14 +21,14 @@ omp_set_num_threads(threads)
 }
 \docType{package}
 \title{
-  Control the number of threads on BLAS for R
+  Control the number of threads on BLAS
 }
 \description{
-Control the number of threads on BLAS(Aka GotoBLAS, ACML and MKL).
+Control the number of threads on 'BLAS' (Aka 'GotoBLAS', 'ACML' and 'MKL').
 --
-GotoBLAS(generic) binary for Windows i386 http://prs.ism.ac.jp/~nakama/Survive
+'GotoBLAS(generic)' binary for Windows i386 http://prs.ism.ac.jp/~nakama/Survive
 GotoBLAS2/binary/windows/x86/KATMAI/Rblas.dll
-GotoBLAS(generic) binary for Windows x64 http://prs.ism.ac.jp/~nakama/SurviveG
+'GotoBLAS(generic)' binary for Windows x64 http://prs.ism.ac.jp/~nakama/SurviveG
 otoBLAS2/binary/windows/x64/PRESCOTT/Rblas.dll
 
 get_num_cores is number of physical cores returned, when feasible.
@@ -38,7 +38,7 @@ get_num_procs is number of logical processor returned.
   \url{http://prs.ism.ac.jp/~nakama/Rhpc}
 }
 \author{
-  Junji Nakano <nakanoj@ism.ac.jp> and Ei-ji Nakama<nakama@com-one.com>
+  Junji NAKANO <nakanoj@ism.ac.jp> and Ei-ji Nakama<nakama@com-one.com>
   Maintainer: Ei-ji Nakama <nakama@com-one.com>
 }
 \keyword{utilities}

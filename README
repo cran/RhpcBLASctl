@@ -1,0 +1,9 @@
+controllable BLAS DLL name of the only Rblas.dll in Windows.
+
+ - Windows x86
+  http://prs.ism.ac.jp/~nakama/SurviveGotoBLAS2/binary/windows/x86/KATMAI/Rblas.dll
+
+ - Windows x64
+  http://prs.ism.ac.jp/~nakama/SurviveGotoBLAS2/binary/windows/x64/PRESCOTT/Rblas.dll
+
+both DLL is generic
