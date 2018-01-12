@@ -17,7 +17,7 @@ omp_get_max_threads()
 omp_set_num_threads(threads)
 }
 \arguments{
-  \item{threads}{number of threads}
+  \item{threads}{Number of threads}
 }
 \docType{package}
 \title{
@@ -43,8 +43,11 @@ get_num_procs is number of logical processor returned.
 }
 \keyword{utilities}
 \examples{
-\dontrun{
-	blas_get_num_procs()
-	blas_set_num_threads(2)
-}
+get_num_cores()
+get_num_procs()
+blas_get_num_procs()
+blas_set_num_threads(2)
+omp_get_num_procs()
+omp_get_max_threads()
+omp_set_num_threads(2)        
 }

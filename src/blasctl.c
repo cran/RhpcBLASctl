@@ -146,6 +146,7 @@ SEXP get_num_cores(void)
   int  key;
   int  seek=0;
   SEXP n;
+  char *rcbuf=NULL;
 
   PROTECT(n = allocVector(INTSXP, 1));
 
@@ -158,8 +159,8 @@ SEXP get_num_cores(void)
       sprintf(cbuf,C_CPU_PATH,i);
       if(NULL==(pfd=fopen(pbuf,"r")))break;
       if(NULL==(cfd=fopen(cbuf,"r")))break;
-      fgets(pbuf,sizeof(pbuf),pfd);
-      fgets(cbuf,sizeof(cbuf),cfd);
+      rcbuf=fgets(pbuf,sizeof(pbuf),pfd);
+      rcbuf=fgets(cbuf,sizeof(cbuf),cfd);
       key = (atoi(pbuf)<<8) + atoi(cbuf);
       
       for(seek=0; seek<num && cpu_table[seek]!=-1; seek++){
@@ -274,16 +275,16 @@ SEXP blas_set_num_threads(SEXP num)
     return R_NilValue;
   }
 
-  if(       NULL != ( goto_set_num_threads =
-		      (void(*)(int))   DLSYM(dlh, GOTO_SET_NUM_THREADS))){
+  if(      NULL != ( *(void**)(&goto_set_num_threads) =
+		     DLSYM(dlh, GOTO_SET_NUM_THREADS))){
     goto_set_num_threads(INTEGER(num)[0]);
   }
-  else if( NULL != ( mkl_domain_set_num_threads =
-		      (int(*)(int,int))DLSYM(dlh, MKL_DOMAIN_SET_NUM_THREADS))){
+  else if( NULL != ( *(void**)(&mkl_domain_set_num_threads) =
+		     DLSYM(dlh, MKL_DOMAIN_SET_NUM_THREADS))){
     mkl_domain_set_num_threads(INTEGER(num)[0],MKL_BLAS);
   }
-  else if( NULL != ( acmlsetnumthreads =
-		      (void(*)(int))   DLSYM(dlh, ACML_SET_NUM_THREADS))){
+  else if( NULL != ( *(void**)(&acmlsetnumthreads) =
+		     DLSYM(dlh, ACML_SET_NUM_THREADS))){
     acmlsetnumthreads(INTEGER(num)[0]);
   }
   /*
@@ -310,16 +311,16 @@ SEXP blas_get_num_procs(void)
   PROTECT(n = allocVector(INTSXP, 1));
   INTEGER(n)[0]=1;
 
-  if(       NULL != ( goto_get_num_procs           =
-		      (int(*)(void))   DLSYM(dlh, GOTO_GET_NUM_PROCS))){
+  if(      NULL != ( *(void**)(&goto_get_num_procs)           =
+		      DLSYM(dlh, GOTO_GET_NUM_PROCS))){
     INTEGER(n)[0]=goto_get_num_procs();
   }
-  else if( NULL != ( mkl_domain_get_max_threads   =
-		     (int(*)(int))   DLSYM(dlh, MKL_DOMAIN_GET_MAX_THREADS))){
+  else if( NULL != ( *(void**)(&mkl_domain_get_max_threads)   =
+		     DLSYM(dlh, MKL_DOMAIN_GET_MAX_THREADS))){
     INTEGER(n)[0]=mkl_domain_get_max_threads(MKL_BLAS);
   }
-  else if( NULL != (acmlgetmaxthreads            =
-		    (int(*)(void))   DLSYM(dlh, ACML_GET_MAX_THREADS))){
+  else if( NULL != ( *(void**)(&acmlgetmaxthreads)            =
+		     DLSYM(dlh, ACML_GET_MAX_THREADS))){
     INTEGER(n)[0]=acmlgetmaxthreads();
   }
   /*
