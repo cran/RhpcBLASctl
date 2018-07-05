@@ -1,5 +1,5 @@
-d779732067ea75c0f4c9a902f8b2bf97 *ChangeLog
-6a640ca0adfdef082d7686fa1c252e0e *DESCRIPTION
+1016122dd3b66a755f952613cde63c96 *ChangeLog
+f4aa750b80e4e91566b66834b8d2af0f *DESCRIPTION
 8b54e5a89fbda3af5e077053d40bec76 *NAMESPACE
 cd20e090012a82c09a7bd6f69809ca89 *R/blasctl.R
 de41eb43bb25b977b10ddf8dd96c502b *R/zzz.R
@@ -10,7 +10,7 @@ bcaf6db365f5589120704bc7dcc51440 *configure.ac
 32f9cddb9333dab0aec4c04f8599322e *man/RhpcBLASctl-package.Rd
 bdb8c54c170ffe69b3f8ef075605264f *src/Makevars.in
 72b4da5dcc2eba5e4e4c1fec437ae04b *src/Makevars.win
-337af717d2eb189f8b9c4e73645c4e3e *src/blasctl.c
+9c0a28d79540325a3d43f4c39f033252 *src/blasctl.c
 0ba98dc05cedae8ac245bd88e9bd4d50 *src/blasctl.h
 1e758b594b3ee449e1dc332f578088f3 *src/config.h.in
 0378b4b3826691be2f7cd973972ae5cb *src/registerDynamicSymbol.c

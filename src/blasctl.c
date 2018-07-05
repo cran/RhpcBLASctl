@@ -65,8 +65,10 @@ typedef struct _SYSTEM_LOGICAL_PROCESSOR_INFORMATION {
 
 #define GOTO_GET_NUM_PROCS         "goto_get_num_procs"
 #define GOTO_SET_NUM_THREADS       "goto_set_num_threads"
-#define MKL_DOMAIN_GET_MAX_THREADS "MKL_Domain_Get_Max_Threads"
-#define MKL_DOMAIN_SET_NUM_THREADS "MKL_Domain_Set_Num_Threads"
+#define MKL_DOMAIN_GET_MAX_THREADS "mkl_domain_get_max_threads"
+#define MKL_DOMAIN_SET_NUM_THREADS "mkl_domain_set_num_threads"
+#define MKL_GET_MAX_THREADS        "mkl_get_max_threads"
+#define MKL_SET_NUM_THREADS        "mkl_set_num_threads"
 #define ACML_GET_MAX_THREADS       "acmlgetmaxthreads"
 #define ACML_SET_NUM_THREADS       "acmlsetnumthreads"
 
@@ -74,6 +76,12 @@ static int  (*goto_get_num_procs)(void) = NULL;
 static void (*goto_set_num_threads)(int) = NULL;
 static int  (*mkl_domain_get_max_threads)(int) = NULL;
 static int  (*mkl_domain_set_num_threads)(int,int) = NULL;
+static int  (*mkl_get_max_threads)(void) = NULL;
+#ifdef WIN32
+static void (*mkl_set_num_threads)(int*) = NULL;
+#else
+static void (*mkl_set_num_threads)(int) = NULL;
+#endif
 static int  (*acmlgetmaxthreads)(void) = NULL;
 static void (*acmlsetnumthreads)(int) = NULL;
 
@@ -270,22 +278,45 @@ SEXP get_num_procs(void)
 SEXP blas_set_num_threads(SEXP num)
 {
   void *dlh = DLOPEN();
-
+  int   threads = (XLENGTH(num)>0) ? INTEGER(num)[0] : 1;
+  
   if(dlh==NULL){
     return R_NilValue;
   }
 
+  
   if(      NULL != ( *(void**)(&goto_set_num_threads) =
 		     DLSYM(dlh, GOTO_SET_NUM_THREADS))){
-    goto_set_num_threads(INTEGER(num)[0]);
+    Rprintf("detected function %s\n", GOTO_SET_NUM_THREADS);
+    goto_set_num_threads(threads);
   }
   else if( NULL != ( *(void**)(&mkl_domain_set_num_threads) =
 		     DLSYM(dlh, MKL_DOMAIN_SET_NUM_THREADS))){
-    mkl_domain_set_num_threads(INTEGER(num)[0],MKL_BLAS);
+    Rprintf("detected function %s\n", MKL_DOMAIN_SET_NUM_THREADS);
+    mkl_domain_set_num_threads(threads,MKL_BLAS);
+  }
+  else if( NULL != ( *(void**)(&mkl_set_num_threads) =
+		     DLSYM(dlh, MKL_SET_NUM_THREADS))){
+    Rprintf("detected function %s\n", MKL_SET_NUM_THREADS);
+#ifdef WIN32
+    Rprintf("!!! CAUTION !!!\n");
+    Rprintf("I do not have Windows MKL, but because the argument\n");
+    Rprintf("of this function of OpenR is somehow passed by pointer,\n");
+    Rprintf("only argument of this function becomes pointer\n");
+    Rprintf("passing on Windows.\n");
+    Rprintf("if you rebuild MKL with Rblas.dll on Windows,\n");
+    Rprintf("if you do not pass the pointer as a result of building\n");
+    Rprintf("it properly, change it to int passing, please contact\n");
+    Rprintf("the maintainer.\n");
+    mkl_set_num_threads(&threads); /* M$ Rblas Only?(open R 3.5.0) */
+#else
+    mkl_set_num_threads(threads);
+#endif
   }
   else if( NULL != ( *(void**)(&acmlsetnumthreads) =
 		     DLSYM(dlh, ACML_SET_NUM_THREADS))){
-    acmlsetnumthreads(INTEGER(num)[0]);
+    Rprintf("detected function %s\n", ACML_SET_NUM_THREADS);
+    acmlsetnumthreads(threads);
   }
   /*
   #ifdef _OPENMP
@@ -318,6 +349,10 @@ SEXP blas_get_num_procs(void)
   else if( NULL != ( *(void**)(&mkl_domain_get_max_threads)   =
 		     DLSYM(dlh, MKL_DOMAIN_GET_MAX_THREADS))){
     INTEGER(n)[0]=mkl_domain_get_max_threads(MKL_BLAS);
+  }
+  else if( NULL != ( *(void**)(&mkl_get_max_threads)   =
+		     DLSYM(dlh, MKL_GET_MAX_THREADS))){
+    INTEGER(n)[0]=mkl_get_max_threads();
   }
   else if( NULL != ( *(void**)(&acmlgetmaxthreads)            =
 		     DLSYM(dlh, ACML_GET_MAX_THREADS))){
