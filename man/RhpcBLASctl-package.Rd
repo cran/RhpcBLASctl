@@ -33,6 +33,10 @@ otoBLAS2/binary/windows/x64/PRESCOTT/Rblas.dll
 
 get_num_cores is number of physical cores returned, when feasible.
 get_num_procs is number of logical processor returned.
+
+If you build R directly on Windows and the BLAS file name is not
+'Rblas.dll', you can give it as 'options ("RhpcBLASctl.win.Rblas.name" = "boofoo.dll")'.
+
 }
 \details{
   \url{http://prs.ism.ac.jp/~nakama/Rhpc}

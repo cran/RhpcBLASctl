@@ -63,27 +63,43 @@ typedef struct _SYSTEM_LOGICAL_PROCESSOR_INFORMATION {
 #define MKL_FFT  2
 #define MKL_VML  3
 
-#define GOTO_GET_NUM_PROCS         "goto_get_num_procs"
-#define GOTO_SET_NUM_THREADS       "goto_set_num_threads"
-#define MKL_DOMAIN_GET_MAX_THREADS "mkl_domain_get_max_threads"
-#define MKL_DOMAIN_SET_NUM_THREADS "mkl_domain_set_num_threads"
-#define MKL_GET_MAX_THREADS        "mkl_get_max_threads"
-#define MKL_SET_NUM_THREADS        "mkl_set_num_threads"
-#define ACML_GET_MAX_THREADS       "acmlgetmaxthreads"
-#define ACML_SET_NUM_THREADS       "acmlsetnumthreads"
+#define    STR_GOTO_GET_NUM_PROCS         "goto_get_num_procs"
+#define    STR_GOTO_SET_NUM_THREADS       "goto_set_num_threads"
+#define    STR_MKL_DOMAIN_GET_MAX_THREADS "mkl_domain_get_max_threads"
+#define    STR_MKL_DOMAIN_SET_NUM_THREADS "mkl_domain_set_num_threads"
+#define    STR_MKL_GET_MAX_THREADS        "mkl_get_max_threads"
+#define    STR_MKL_SET_NUM_THREADS        "mkl_set_num_threads"
+#define    STR_ACMLGETMAXTHREADS          "acmlgetmaxthreads"
+#define    STR_ACMLSETNUMTHREADS          "acmlsetnumthreads"
+#define    STR_BLI_THREAD_GET_NUM_THREADS "bli_thread_get_num_threads"
+#define    STR_BLI_THREAD_SET_NUM_THREADS "bli_thread_set_num_threads"
 
-static int  (*goto_get_num_procs)(void) = NULL;
-static void (*goto_set_num_threads)(int) = NULL;
-static int  (*mkl_domain_get_max_threads)(int) = NULL;
-static int  (*mkl_domain_set_num_threads)(int,int) = NULL;
-static int  (*mkl_get_max_threads)(void) = NULL;
+typedef int  (*GOTO_GET_NUM_PROCS)        (void);
+typedef void (*GOTO_SET_NUM_THREADS)      (int);
+typedef int  (*MKL_DOMAIN_GET_MAX_THREADS)(int*);
+typedef int  (*MKL_DOMAIN_SET_NUM_THREADS)(int*,int*);
+typedef int  (*MKL_GET_MAX_THREADS)       (void);
+typedef void (*MKL_SET_NUM_THREADS)       (int*);
+typedef int  (*ACMLGETMAXTHREADS)         (void);
+typedef void (*ACMLSETNUMTHREADS)         (int);
+typedef int  (*BLI_THREAD_GET_NUM_THREADS)(void);
+typedef void (*BLI_THREAD_SET_NUM_THREADS)(int);
+ 
+static         GOTO_GET_NUM_PROCS          goto_get_num_procs          = NULL;
+static         GOTO_SET_NUM_THREADS        goto_set_num_threads        = NULL;
+static         MKL_DOMAIN_GET_MAX_THREADS  mkl_domain_get_max_threads  = NULL;
+static         MKL_DOMAIN_SET_NUM_THREADS  mkl_domain_set_num_threads  = NULL;
+static         MKL_GET_MAX_THREADS         mkl_get_max_threads         = NULL;
+static         MKL_SET_NUM_THREADS         mkl_set_num_threads         = NULL;
+static         ACMLGETMAXTHREADS           acmlgetmaxthreads           = NULL;
+static         ACMLSETNUMTHREADS           acmlsetnumthreads           = NULL;
+static         BLI_THREAD_GET_NUM_THREADS  bli_thread_get_num_threads  = NULL;
+static         BLI_THREAD_SET_NUM_THREADS  bli_thread_set_num_threads  = NULL;
+
+
 #ifdef WIN32
-static void (*mkl_set_num_threads)(int*) = NULL;
-#else
-static void (*mkl_set_num_threads)(int) = NULL;
+typedef BOOL (WINAPI *GLPI)(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, PDWORD);
 #endif
-static int  (*acmlgetmaxthreads)(void) = NULL;
-static void (*acmlsetnumthreads)(int) = NULL;
 
 SEXP get_num_cores(void)
 {
@@ -118,8 +134,9 @@ SEXP get_num_cores(void)
   PROTECT(n = allocVector(INTSXP, 1));
   
   if (num == 0) {
-    BOOL (WINAPI *glpi)(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, PDWORD);
-    glpi = (void *) GetProcAddress( GetModuleHandle("kernel32"), "GetLogicalProcessorInformation");
+    //BOOL (WINAPI *glpi)(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, PDWORD);
+    GLPI glpi;
+    glpi = (GLPI) GetProcAddress( GetModuleHandle("kernel32"), "GetLogicalProcessorInformation");
     if (NULL != glpi) {
       DWORD len = 0;
       glpi(NULL, &len);
@@ -274,58 +291,35 @@ SEXP get_num_procs(void)
 #endif
 }
 
-
 SEXP blas_set_num_threads(SEXP num)
 {
   void *dlh = DLOPEN();
   int   threads = (XLENGTH(num)>0) ? INTEGER(num)[0] : 1;
-  
+
   if(dlh==NULL){
+    error("Failed to acquire BLAS handle.");
     return R_NilValue;
   }
 
+  if (threads < 1) threads=1; /* minimum 1 */
   
-  if(      NULL != ( *(void**)(&goto_set_num_threads) =
-		     DLSYM(dlh, GOTO_SET_NUM_THREADS))){
-    Rprintf("detected function %s\n", GOTO_SET_NUM_THREADS);
+  if(      NULL != ( EXPDLSYM(goto_set_num_threads,       GOTO_SET_NUM_THREADS,       dlh, STR_GOTO_SET_NUM_THREADS))){
     goto_set_num_threads(threads);
   }
-  else if( NULL != ( *(void**)(&mkl_domain_set_num_threads) =
-		     DLSYM(dlh, MKL_DOMAIN_SET_NUM_THREADS))){
-    Rprintf("detected function %s\n", MKL_DOMAIN_SET_NUM_THREADS);
-    mkl_domain_set_num_threads(threads,MKL_BLAS);
+  else if( NULL != ( EXPDLSYM(mkl_domain_set_num_threads, MKL_DOMAIN_SET_NUM_THREADS, dlh, STR_MKL_DOMAIN_SET_NUM_THREADS))){
+    int   type = MKL_BLAS;
+    mkl_domain_set_num_threads(&threads,&type);
   }
-  else if( NULL != ( *(void**)(&mkl_set_num_threads) =
-		     DLSYM(dlh, MKL_SET_NUM_THREADS))){
-    Rprintf("detected function %s\n", MKL_SET_NUM_THREADS);
-#ifdef WIN32
-    Rprintf("!!! CAUTION !!!\n");
-    Rprintf("I do not have Windows MKL, but because the argument\n");
-    Rprintf("of this function of OpenR is somehow passed by pointer,\n");
-    Rprintf("only argument of this function becomes pointer\n");
-    Rprintf("passing on Windows.\n");
-    Rprintf("if you rebuild MKL with Rblas.dll on Windows,\n");
-    Rprintf("if you do not pass the pointer as a result of building\n");
-    Rprintf("it properly, change it to int passing, please contact\n");
-    Rprintf("the maintainer.\n");
-    mkl_set_num_threads(&threads); /* M$ Rblas Only?(open R 3.5.0) */
-#else
-    mkl_set_num_threads(threads);
-#endif
+  else if(NULL != ( EXPDLSYM(mkl_set_num_threads,         MKL_SET_NUM_THREADS,        dlh, STR_MKL_SET_NUM_THREADS))){
+    mkl_set_num_threads(&threads);
   }
-  else if( NULL != ( *(void**)(&acmlsetnumthreads) =
-		     DLSYM(dlh, ACML_SET_NUM_THREADS))){
-    Rprintf("detected function %s\n", ACML_SET_NUM_THREADS);
+  else if( NULL != ( EXPDLSYM(acmlsetnumthreads,          ACMLSETNUMTHREADS,          dlh, STR_ACMLSETNUMTHREADS))){
     acmlsetnumthreads(threads);
   }
-  /*
-  #ifdef _OPENMP
-    else{
-      omp_set_num_threads(INTEGER(num)[0]);
-    }
-  #else
-  #endif
-  */
+  else if( NULL != ( EXPDLSYM(bli_thread_set_num_threads, BLI_THREAD_SET_NUM_THREADS, dlh, STR_BLI_THREAD_SET_NUM_THREADS))){
+    bli_thread_set_num_threads(threads);
+  }
+
   DLCLOSE(dlh);
   return R_NilValue;
 }
@@ -336,35 +330,30 @@ SEXP blas_get_num_procs(void)
   void *dlh = DLOPEN();
 
   if(dlh==NULL){
-    return R_NilValue;
+    error("Failed to acquire BLAS handle.");
+    return R_UnboundValue;
   }
 
   PROTECT(n = allocVector(INTSXP, 1));
   INTEGER(n)[0]=1;
 
-  if(      NULL != ( *(void**)(&goto_get_num_procs)           =
-		      DLSYM(dlh, GOTO_GET_NUM_PROCS))){
+  if(      NULL != ( EXPDLSYM(goto_get_num_procs,         GOTO_GET_NUM_PROCS,         dlh, STR_GOTO_GET_NUM_PROCS))){
     INTEGER(n)[0]=goto_get_num_procs();
   }
-  else if( NULL != ( *(void**)(&mkl_domain_get_max_threads)   =
-		     DLSYM(dlh, MKL_DOMAIN_GET_MAX_THREADS))){
-    INTEGER(n)[0]=mkl_domain_get_max_threads(MKL_BLAS);
+  else if( NULL != ( EXPDLSYM(mkl_domain_get_max_threads, MKL_DOMAIN_GET_MAX_THREADS, dlh, STR_MKL_DOMAIN_GET_MAX_THREADS))){
+    int type = MKL_BLAS;
+    INTEGER(n)[0]=mkl_domain_get_max_threads(&type);
   }
-  else if( NULL != ( *(void**)(&mkl_get_max_threads)   =
-		     DLSYM(dlh, MKL_GET_MAX_THREADS))){
+  else if( NULL != ( EXPDLSYM(mkl_get_max_threads,        MKL_GET_MAX_THREADS,        dlh, STR_MKL_GET_MAX_THREADS))){
     INTEGER(n)[0]=mkl_get_max_threads();
   }
-  else if( NULL != ( *(void**)(&acmlgetmaxthreads)            =
-		     DLSYM(dlh, ACML_GET_MAX_THREADS))){
+  else if( NULL != ( EXPDLSYM(acmlgetmaxthreads,          ACMLGETMAXTHREADS,          dlh, STR_ACMLGETMAXTHREADS))){
     INTEGER(n)[0]=acmlgetmaxthreads();
   }
-  /*
-  #ifdef _OPENMP
-    else{
-      INTEGER(n)[0]=omp_get_max_threads();
-    }
-  #endif
-  */
+  else if( NULL != ( EXPDLSYM(bli_thread_get_num_threads, BLI_THREAD_GET_NUM_THREADS, dlh, STR_BLI_THREAD_GET_NUM_THREADS))){
+    INTEGER(n)[0]=bli_thread_get_num_threads();
+  }
+
   DLCLOSE(dlh);
   UNPROTECT(1);
   return (n);
