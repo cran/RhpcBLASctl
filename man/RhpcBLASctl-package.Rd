@@ -25,21 +25,33 @@ omp_set_num_threads(threads)
 }
 \description{
 Control the number of threads on 'BLAS' (Aka 'GotoBLAS', 'ACML' and 'MKL').
---
-'GotoBLAS(generic)' binary for Windows i386 http://prs.ism.ac.jp/~nakama/Survive
-GotoBLAS2/binary/windows/x86/KATMAI/Rblas.dll
-'GotoBLAS(generic)' binary for Windows x64 http://prs.ism.ac.jp/~nakama/SurviveG
-otoBLAS2/binary/windows/x64/PRESCOTT/Rblas.dll
-
-get_num_cores is number of physical cores returned, when feasible.
-get_num_procs is number of logical processor returned.
 
 If you build R directly on Windows and the BLAS file name is not
 'Rblas.dll', you can give it as 'options ("RhpcBLASctl.win.Rblas.name" = "boofoo.dll")'.
 
+openmp-related functions only work at build-time instructions.
+Omp_get * now returns NA_Integer if R was not built with openmp instructions.
+NOTE: if R itself is built without OpenMP instructions and BLAS thread
+is used with OpenMP, this package will not work...XD
+
+}
+\value{
+  \item{get_num_cores}{Number of CPU physical processor.
+    NOTE:Returns 1L if unknown}
+  \item{get_num_procs}{Number of CPU logical processor.
+    NOTE:Returns 1L if unknown}
+  \item{blas_get_num_procs}{Number of available cores for the optimized
+    BLAS.
+    NOTE:Returns 1L if unknown}
+  \item{omp_get_num_procs}{Result from OpenMP's omp_get_num_procs
+    function.
+    NOTE Returns NA_integer_ if unknown}
+  \item{omp_get_max_threads}{Result from OpenMP's omp_get_max_threads
+    function.
+    NOTE Returns NA_integer_ if unknown}
 }
 \details{
-  \url{http://prs.ism.ac.jp/~nakama/Rhpc}
+  \url{https://prs.ism.ac.jp/~nakama/Rhpc}
 }
 \author{
   Junji NAKANO <nakanoj@ism.ac.jp> and Ei-ji Nakama<nakama@com-one.com>

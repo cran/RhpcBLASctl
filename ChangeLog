@@ -1,3 +1,9 @@
+0.20-17		* Tweak from check as-cran
+	        * omp_get_num_procs and omp_get_max_threads changed
+	          to return NA_integer if openmp is not used at build time.
+	          A suggestion to return NA_integer was made by
+	          Henrik Bengtsson.
+
 0.18-205	* Tweak from check as-cran.
 	        * BLAS DLL file name on Windows can be specified
 	          as an options("RhpcBLASctl.win.Rblas.name")

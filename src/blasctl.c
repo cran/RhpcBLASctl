@@ -371,29 +371,27 @@ SEXP Rhpc_omp_set_num_threads(SEXP num)
 
 SEXP Rhpc_omp_get_num_procs(void)
 {
-#ifdef _OPENMP
   SEXP n;
   PROTECT(n = allocVector(INTSXP, 1));
-
+#ifdef _OPENMP
   INTEGER(n)[0]=omp_get_num_procs();
+#else
+  INTEGER(n)[0]=NA_INTEGER;
+#endif
   UNPROTECT(1);
   return (n);
-#else
-  return(R_NilValue);
-#endif
 }
 
 SEXP Rhpc_omp_get_max_threads(void)
 {
-#ifdef _OPENMP
   SEXP n;
   PROTECT(n = allocVector(INTSXP, 1));
-
+#ifdef _OPENMP
   INTEGER(n)[0]=omp_get_max_threads();
+#else
+  INTEGER(n)[0]=NA_INTEGER;
+#endif
   UNPROTECT(1);
   return (n);
-#else
-  return(R_NilValue);
-#endif
 }
 
