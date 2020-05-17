@@ -14,7 +14,9 @@
 #endif
 
 #ifdef HAVE_SYS_SYSCTL_H
+#if !defined(__linux__)
 #include <sys/sysctl.h>
+#endif /* !defined(__linux__) */
 #endif
 
 
