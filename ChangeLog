@@ -1,3 +1,5 @@
+0.21-244	* Tweak omp.h position for clang13.
+
 0.20-137	* omit sys/sysctl.h on linux.
 
 0.20-17		* Tweak from check as-cran

@@ -51,7 +51,7 @@ is used with OpenMP, this package will not work...XD
     NOTE Returns NA_integer_ if unknown}
 }
 \details{
-  \url{https://prs.ism.ac.jp/~nakama/Rhpc}
+  \url{https://prs.ism.ac.jp/~nakama/Rhpc/}
 }
 \author{
   Junji NAKANO <nakanoj@ism.ac.jp> and Ei-ji Nakama<nakama@com-one.com>

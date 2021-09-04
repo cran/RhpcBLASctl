@@ -1,13 +1,1 @@
-If you build R on Windows and link with a DLL that is not Rblas,
-load BLAS.dll by specifying
-     options ("RhpcBLASctl.win.Rblas.name" = "BLAS.dll") .
-     
-Controllable BLAS DLL name of the Rblas.dll(default) in Windows.
-
- - Windows x86
-  http://prs.ism.ac.jp/~nakama/SurviveGotoBLAS2/binary/windows/x86/KATMAI/Rblas.dll
-
- - Windows x64
-  http://prs.ism.ac.jp/~nakama/SurviveGotoBLAS2/binary/windows/x64/PRESCOTT/Rblas.dll
-
-both DLL is generic
+Rblas.dll is no longer available...

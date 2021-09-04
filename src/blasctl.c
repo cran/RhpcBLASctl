@@ -1,9 +1,16 @@
-#include <R.h>
-#include <Rinternals.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #ifndef WIN32
 #include "config.h"
 #endif
+
+#include <R.h>
+#include <Rinternals.h>
+
+#include "blasctl.h"
+
 
 #ifdef HAVE_SYS_SYSINFO_H
 #include <sys/sysinfo.h>
@@ -18,13 +25,6 @@
 #include <sys/sysctl.h>
 #endif /* !defined(__linux__) */
 #endif
-
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-#include "blasctl.h"
 
 #if defined(WIN32)
 #if !defined(LTP_PC_SMT)
