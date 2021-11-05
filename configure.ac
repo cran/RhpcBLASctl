@@ -1,10 +1,12 @@
-AC_INIT(configure.ac)
+AC_INIT
+AC_CONFIG_SRCDIR([configure.ac])
 
-AC_CONFIG_HEADER(src/config.h)
+AC_CONFIG_HEADERS([src/config.h])
 
 AC_CHECK_HEADERS([sys/sysctl.h])
 AC_CHECK_FUNCS( [sysctl sysctlbyname] )
 AC_CHECK_HEADERS([sys/sysinfo.h])
 AC_CHECK_FUNCS( [get_nprocs] )
 
-AC_OUTPUT(src/Makevars)
+AC_CONFIG_FILES([src/Makevars])
+AC_OUTPUT
