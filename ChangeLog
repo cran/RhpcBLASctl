@@ -1,3 +1,7 @@
+0.23-42		* tweaks.
+
+0.23-41		* Avoiding problems caused by configure show.
+
 0.21-244	* Tweak omp.h position for clang13.
 
 0.20-137	* omit sys/sysctl.h on linux.

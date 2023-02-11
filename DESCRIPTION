@@ -1,6 +1,6 @@
 Package: RhpcBLASctl
-Version: 0.21-247.1
-Date: 2021-09-04
+Version: 0.23-42
+Date: 2023-02-11
 Title: Control the Number of Threads on 'BLAS'
 Author: Junji NAKANO <nakanoj@ism.ac.jp> and Ei-ji Nakama <nakama@ki.rim.or.jp>
 Maintainer: Ei-ji Nakama <nakama@ki.rim.or.jp>
@@ -11,6 +11,6 @@ License: AGPL-3
 URL: https://prs.ism.ac.jp/~nakama/Rhpc/
 ByteCompile: true
 NeedsCompilation: yes
-Packaged: 2021-11-05 17:22:47 UTC; hornik
+Packaged: 2023-02-11 00:17:46 UTC; nakama
 Repository: CRAN
-Date/Publication: 2021-11-05 18:43:04 UTC
+Date/Publication: 2023-02-11 01:00:02 UTC

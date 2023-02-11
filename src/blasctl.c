@@ -182,8 +182,8 @@ SEXP get_num_cores(void)
     cpu_table=malloc(num*sizeof(int));
     memset((void*)cpu_table, 0xff, num*sizeof(int));
     for (seek=0,i=0 ; i<num ; i++){
-      sprintf(pbuf,P_CPU_PATH,i);
-      sprintf(cbuf,C_CPU_PATH,i);
+      snprintf(pbuf,sizeof(pbuf),P_CPU_PATH,i);
+      snprintf(cbuf,sizeof(cbuf),C_CPU_PATH,i);
       if(NULL==(pfd=fopen(pbuf,"r")))break;
       if(NULL==(cfd=fopen(cbuf,"r")))break;
       rcbuf=fgets(pbuf,sizeof(pbuf),pfd);
